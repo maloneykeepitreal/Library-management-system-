@@ -1,0 +1,71 @@
+-- Drop tables in the correct order to avoid foreign key constraint errors
+DROP TABLE IF EXISTS Loans;
+DROP TABLE IF EXISTS Books;
+DROP TABLE IF EXISTS Authors;
+DROP TABLE IF EXISTS Members;
+
+-- Create the Authors table
+CREATE TABLE Authors (
+    author_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    country VARCHAR(50),
+    UNIQUE (first_name, last_name)
+);
+
+-- Create the Books table
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    publication_year INT,
+    isbn VARCHAR(13) NOT NULL UNIQUE,
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+-- Create the Members table
+CREATE TABLE Members (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    phone_number VARCHAR(20)
+);
+
+-- Create the Loans table to manage book loans
+-- This table establishes a many-to-many relationship between Members and Books
+CREATE TABLE Loans (
+    loan_id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT,
+    member_id INT,
+    loan_date DATE NOT NULL,
+    due_date DATE NOT NULL,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (member_id) REFERENCES Members(member_id),
+    -- Constraint to ensure a book can only be loaned to one member at a time
+    -- An un-returned book (return_date IS NULL) cannot be loaned again
+    UNIQUE KEY unique_unreturned_book (book_id, return_date)
+);
+
+-- Insert some sample data into the tables
+INSERT INTO Authors (first_name, last_name, country) VALUES
+('Harper', 'Lee', 'USA'),
+('George', 'Orwell', 'UK'),
+('Gabriel', 'García Márquez', 'Colombia');
+
+INSERT INTO Books (title, publication_year, isbn, author_id) VALUES
+('To Kill a Mockingbird', 1960, '9780061120084', 1),
+('1984', 1949, '9780451524935', 2),
+('One Hundred Years of Solitude', 1967, '9780060883287', 3),
+('The Catcher in the Rye', 1951, '9780316769488', NULL); -- Example of a book without a known author in our system
+
+INSERT INTO Members (first_name, last_name, email, phone_number) VALUES
+('Alice', 'Johnson', 'alice.j@example.com', '555-1234'),
+('Bob', 'Williams', 'bob.w@example.com', '555-5678');
+
+-- Record a loan
+-- The unique_unreturned_book constraint ensures that 'To Kill a Mockingbird'
+-- cannot be loaned again until it is returned (return_date is not NULL)
+INSERT INTO Loans (book_id, member_id, loan_date, due_date) VALUES
+(1, 1, '2025-08-25', '2025-09-08');
