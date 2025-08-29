@@ -1,0 +1,46 @@
+Library Management System
+​Project Description
+​This project is a complete relational database management system for a library, meticulously designed using MySQL. Its primary function is to efficiently manage the core operations of a library: tracking books, authors, members, and the entire loan process. The system is architected to guarantee data integrity and consistency by adhering to fundamental principles of relational database design, including the strategic use of primary keys, foreign keys, and various data constraints. By enforcing these rules at the database level, the system prevents logical inconsistencies like a book being loaned out to a member who does not exist or a book being double-booked. This structured approach not only ensures data quality but also lays the groundwork for complex queries and reporting on loan history and book availability.
+​How to Run/Setup the Project
+​To get this database up and running, you'll need a MySQL environment. Follow these simple steps:
+​Open a MySQL Client: Launch your preferred MySQL client, whether it's a command-line interface or a graphical tool like MySQL Workbench.
+​Execute the SQL Script: Connect to your MySQL server, open the library_management.sql file, and execute the script. The script will automatically create the necessary tables, define all keys and constraints, and populate the database with initial sample data for immediate use.
+​Entity-Relationship Diagram (ERD)
+​An ERD is a visual blueprint of the database schema.  You can find a complete visual representation of the database's tables and their relationships here. The diagram is crucial for understanding the structure and flow of data within the system.
+​Library Management System ERD
+​This diagram illustrates the tables and their relationships within the Library Management System database.
+​Tables
+​Authors
+​author_id (PK)
+​first_name
+​last_name
+​country
+​Books
+​book_id (PK)
+​title
+​publication_year
+​isbn
+​author_id (FK to Authors.author_id)
+​Members
+​member_id (PK)
+​first_name
+​last_name
+​email
+​phone_number
+​Loans
+​loan_id (PK)
+​book_id (FK to Books.book_id)
+​member_id (FK to Members.member_id)
+​loan_date
+​due_date
+​return_date
+​Relationships
+​Authors to Books: One-to-Many
+​An author can write many books, but each book has only one author.
+​Enforced by the author_id foreign key in the Books table.
+​Books to Loans: One-to-Many
+​A book can be involved in many loans, but each loan is for a single book.
+​Enforced by the book_id foreign key in the Loans table.
+​Members to Loans: One-to-Many
+​A member can have many loans, but each loan is for a single member.
+​Enforced by the member_id foreign key in the Loans table.
